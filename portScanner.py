@@ -6,7 +6,7 @@ import ipaddress
 class findHome:
     def __init__(self):
         self.scan:bool = True
-        self.ranges: list = ["192.168.1.1/24", "10.42.0.1/24"]
+        self.ranges: list = ["192.168.1.0/24", "10.42.0.0/24"]
         self.fileLocation: str = f"{os.getcwd()}/data.txt"
         self.data: str = ""
         self.dataLines: list = []
