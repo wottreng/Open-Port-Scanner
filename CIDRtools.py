@@ -5,45 +5,52 @@ import ipaddress
 class CIDRtools:
 
     def __init__(self):
-        self.CIDRlist = ["10.42.0.0/24, 192.168.1.0/24"]
-        self.totalList: list = []
-        self.subCIDRlist: list = []
+        self.testCIDR = ["10.42.0.0/23"]
 
-    def writeToFile(self, output):
-        with open(f"{os.getcwd()}/subCIDRlist.txt", "w") as file:
-            file.write(f"{output}\n")
+    def writeToFile(self, data: list, fileName: str = "CIDRtoolsOutput.txt"):
+        with open(f"{os.getcwd()}/{fileName}", "w") as file:
+            for line in data:
+                file.write(f"{line}\n")
 
-    def getIPaddrFromCIDR(self, ipCIDR):
-        # cidrx = '185.117.73.0/24'
+    def getAllIPaddrFromCIDR(self, ipCIDR: str):
+        # ipCIDR = '185.117.73.0/24'
+        allIPaddresses: list = []
         set1 = ipaddress.ip_network(ipCIDR)
         ip_list = [str(ip) for ip in set1]
         for ipv4 in ip_list:
             # print(ipv4)
-            self.totalList.append(ipv4)
+            allIPaddresses.append(ipv4)
+        return allIPaddresses
 
-    def getSubCIDRlist(self):
-        for ipaddress in self.totalList:
-            if ".0" in ipaddress:
-                self.subCIDRlist.append(f"{ipaddress}/24")
-        print(self.subCIDRlist)
+    def getSubCIDRlist(self, allIPaddresses: list):
+        subCIDRlist: list = []
+        for ipaddress in allIPaddresses:
+            if ".0" in ipaddress[-2:]:
+                subCIDRlist.append(f"{ipaddress}/24")
+        return subCIDRlist
 
-    def buildSubCIDRlist(self):
-        for cidr in self.CIDRlist:
-            self.getIPaddrFromCIDR(cidr)
-        #self.writeToFile(str(a.totalList))
-        self.getSubCIDRlist()
-        self.writeToFile(a.subCIDRlist)
+    def buildSubCIDRlist(self, CIDRlist: list):
+        # CIDRlist = ["1.1.1.0/19","etc..."]
+        allSubCIDRs: list = []
+        for CIDR in CIDRlist:
+            allIPaddresses = self.getAllIPaddrFromCIDR(CIDR)
+            subCIDRlist = self.getSubCIDRlist(allIPaddresses)
+            for CIDR in subCIDRlist:
+                allSubCIDRs.append(CIDR)
+        return allSubCIDRs
 
-    def readSubCIDRlist(self):
-        with open(f"{os.getcwd()}/subCIDRlist.txt", "r") as file:
-            data = file.readline()
-        list = data.split(", ")
-        for line in list:
-            self.subCIDRlist.append(line.strip().strip("\'"))
-        print(self.subCIDRlist)
+    def readSubCIDRlist(self, fileName: str = "allSubCIDRs.txt"):
+        CIDRlist: list = []
+        with open(f"{os.getcwd()}/{fileName}", "r") as file:
+            data: list = file.readlines()
+        for line in data:
+            CIDRlist.append(line.strip())
+        return CIDRlist
 
 if __name__ == '__main__':
     a = CIDRtools()
-    a.getSubCIDRlist()
-
-
+    allSubCIDRs = a.buildSubCIDRlist(a.testCIDR)
+    print(allSubCIDRs)
+    a.writeToFile(allSubCIDRs, "allSubCIDRs.txt")
+    CIDRlist = a.readSubCIDRlist()
+    print(CIDRlist)
