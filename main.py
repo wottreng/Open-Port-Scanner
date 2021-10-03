@@ -5,7 +5,7 @@ from CIDRtools import CIDRtools
 from fileTools import fileTools
 from colorText import colorText
 
-CIDRlist = ["10.205.132.0/24"]
+CIDRlist = ["10.42.1.0/24"]
 
 if __name__ == '__main__':
     ScanForPorts = True  # scan for open ports?
